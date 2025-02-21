@@ -22,7 +22,7 @@ bool flagZero(const int AC) {
 }
 
 bool flagNeg(const int AC) {
-    return AC < 0x00;
+    return AC & 0x80;
 }
 
 int main(void)
@@ -30,7 +30,7 @@ int main(void)
     int AC = 0;
     int PC = 0x04;
 
-    FILE *file = fopen("/Users/hmmedeiros/CLionProjects/untitled/TESTESOMA.mem", "rb");
+    FILE *file = fopen("/Users/hmmedeiros/CLionProjects/untitled/TESTEGERAL.mem", "rb");
 
     if(file == NULL){
         printf("Não foi possivel ler o arquivo!");
@@ -41,8 +41,14 @@ int main(void)
     fread(memory, 1, TOTAL_SIZE, file);
     fclose(file);
 
-    memory[0x80] = 0x02;
-    memory[0x81] = 0x0C;
+    memory[0x80] = 0x05;
+    memory[0x81] = 0x03;
+    memory[0x83] = 0x02;
+    memory[0x84] = 0x01;
+    memory[0x86] = 0x06;
+    memory[0x87] = 0x03;
+    memory[0x89] = 0xFC;
+    memory[0x8A] = 0x03;
 
     int posicao = 0;
 
@@ -86,14 +92,12 @@ int main(void)
                 break;
             case JMP:
                 PC += 2;
-                posicao = memory[PC];
-                PC = memory[posicao];
+                PC = memory[PC] * 2 + 4;
                 break;
             case JN:
                 PC += 2;
                 if (flagNeg(AC)) {
-                    posicao = memory[PC];
-                    PC = memory[posicao];
+                    PC = memory[PC] * 2 + 4;
                 } else {
                     PC += 2;
                 }
@@ -101,8 +105,7 @@ int main(void)
             case JZ:
                 PC += 2;
                 if (flagZero(AC)) {
-                    posicao = memory[PC];
-                    PC = memory[posicao];
+                    PC = memory[PC] * 2 + 4;
                 } else {
                     PC += 2;
                 }
