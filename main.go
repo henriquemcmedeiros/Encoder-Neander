@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/binary"
 	"fmt"
 	"os"
 )
@@ -60,62 +59,62 @@ func main() {
 	posicao := 0
 
 	for memory[PC] != HLT && PC <= 0xFF {
-		fmt.Printf("AC: %x PC: %x FZ: %t FN: %t INSTRUCAO: %x CONTEUDO: %x\n", AC&0xFF, PC, flagZero(AC), flagNeg(AC), memory[PC], memory[PC+2])
+		fmt.Printf("AC: %2x PC: %2x FZ: %5t FN: %5t INSTRUCAO: %2x CONTEUDO: %2x\n", AC & 0xFF, PC, flagZero(AC), flagNeg(AC), memory[PC], memory[PC+2])
 
 		switch memory[PC] {
-		case STA:
-			PC += 2
-			posicao = int(memory[PC])
-			memory[posicao] = byte(AC)
-			PC += 2
-		case LDA:
-			PC += 2
-			posicao = int(memory[PC])
-			AC = int(memory[posicao])
-			PC += 2
-		case ADD:
-			PC += 2
-			posicao = int(memory[PC])
-			AC += int(memory[posicao])
-			PC += 2
-		case OR:
-			PC += 2
-			posicao = int(memory[PC])
-			AC |= int(memory[posicao])
-			PC += 2
-		case AND:
-			PC += 2
-			posicao = int(memory[PC])
-			AC &= int(memory[posicao])
-			PC += 2
-		case NOT:
-			AC = ^AC
-			PC += 2
-		case JMP:
-			PC += 2
-			PC = int(memory[PC])*2 + 4
-		case JN:
-			PC += 2
-			if flagNeg(AC) {
-				PC = int(memory[PC])*2 + 4
-			} else {
+			case STA:
 				PC += 2
-			}
-		case JZ:
-			PC += 2
-			if flagZero(AC) {
-				PC = int(memory[PC])*2 + 4
-			} else {
+				posicao = int(memory[PC])
+				memory[posicao] = byte(AC)
 				PC += 2
-			}
-		default:
-			PC += 2
+			case LDA:
+				PC += 2
+				posicao = int(memory[PC])
+				AC = int(memory[posicao])
+				PC += 2
+			case ADD:
+				PC += 2
+				posicao = int(memory[PC])
+				AC += int(memory[posicao])
+				PC += 2
+			case OR:
+				PC += 2
+				posicao = int(memory[PC])
+				AC |= int(memory[posicao])
+				PC += 2
+			case AND:
+				PC += 2
+				posicao = int(memory[PC])
+				AC &= int(memory[posicao])
+				PC += 2
+			case NOT:
+				AC = ^AC
+				PC += 2
+			case JMP:
+				PC += 2
+				PC = int(memory[PC]) * 2 + 4
+			case JN:
+				PC += 2
+				if flagNeg(AC) {
+					PC = int(memory[PC]) * 2 + 4
+				} else {
+					PC += 2
+				}
+			case JZ:
+				PC += 2
+				if flagZero(AC) {
+					PC = int(memory[PC]) * 2 + 4
+				} else {
+					PC += 2
+				}
+			default:
+				PC += 2
 		}
 	}
 
 	fmt.Println("========== Retorno de Memória ===========")
 	for i := 0; i < TOTAL_SIZE; i++ {
-		fmt.Printf("%3x:%2x ", i, memory[i])
+		fmt.Printf("%3x:%3x ", i, memory[i])
 		if i%16 == 15 {
 			fmt.Println()
 		}
