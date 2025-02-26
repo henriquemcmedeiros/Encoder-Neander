@@ -1,7 +1,8 @@
-package main
+package encoder
 
 import (
 	"fmt"
+	"log"
 	"os"
 )
 
@@ -26,24 +27,16 @@ func flagZero(AC int) bool {
 }
 
 func flagNeg(AC int) bool {
-	return AC&0x80 != 0
+	return AC & 0x80 != 0
 }
 
 func main() {
 	AC := 0
 	PC := 0x04
 
-	file, err := os.Open("/Users/hmmedeiros/CLionProjects/untitled/TESTEGERAL.mem")
+	memory, err := os.ReadFile("TESTEGERAL.mem")
 	if err != nil {
-		fmt.Println("Não foi possível ler o arquivo!")
-		return
-	}
-	defer file.Close()
-
-	memory := make([]byte, TOTAL_SIZE)
-	_, err = file.Read(memory)
-	if err != nil {
-		fmt.Println("Erro ao ler o arquivo!")
+		log.Fatalf("Não foi possível ler o arquivo!")
 		return
 	}
 
