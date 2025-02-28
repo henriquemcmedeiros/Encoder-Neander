@@ -1,7 +1,6 @@
-package main
+package lexer
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"regexp"
@@ -32,8 +31,8 @@ var (
 )
 
 type Token struct {
-	tipo  string
-	valor string
+	Tipo  string
+	Valor string
 }
 
 func isInstruction(lexema string) bool {
@@ -60,40 +59,42 @@ func isVariable(lexema string) bool {
 func lexer(lexema string) Token {
 	switch {
 	case strings.HasPrefix(lexema, "."):
-		return Token{tipo: TOKEN_SECTION, valor: strings.TrimPrefix(lexema, ".")}
+		return Token{Tipo: TOKEN_SECTION, Valor: strings.TrimPrefix(lexema, ".")}
 	case isInstruction(lexema):
-		return Token{tipo: TOKEN_INSTR, valor: lexema}
+		return Token{Tipo: TOKEN_INSTR, Valor: lexema}
 	case isDefine(lexema):
-		return Token{tipo: TOKEN_DEFINE, valor: lexema}
+		return Token{Tipo: TOKEN_DEFINE, Valor: lexema}
 	case isNumber(lexema):
-		return Token{tipo: TOKEN_NUMBER, valor: lexema}
+		return Token{Tipo: TOKEN_NUMBER, Valor: lexema}
 	case isVariable(lexema):
-		return Token{tipo: TOKEN_VAR, valor: lexema}
+		return Token{Tipo: TOKEN_VAR, Valor: lexema}
 	default:
 		log.Printf("Token desconhecido: %s", lexema)
-		return Token{tipo: TOKEN_UNKNOWN, valor: lexema}
+		return Token{Tipo: TOKEN_UNKNOWN, Valor: lexema}
 	}
 }
 
-func main() {
+func GetTokens(caminhoArquivo string)(tokens []Token) {
 	arquivo, err := os.ReadFile("assembly_file.txt")
 	if err != nil {
 		log.Fatalf("Não foi possível ler o arquivo: %v", err)
 	}
 
-	re := regexp.MustCompile(`\s+`)
-	lexemas := re.Split(string(arquivo), -1)
+	linhas := strings.Split(string(arquivo), "\n")
 
-	var tokens []Token
-	for _, lexema := range lexemas {
-		lexema = strings.TrimSpace(lexema)
-		if lexema != "" {
-			tokens = append(tokens, lexer(lexema))
+	for _, linha := range linhas {
+		linha = strings.Split(linha, ";")[0]
+		re := regexp.MustCompile(`\s+`)
+		lexemas := re.Split(strings.TrimSpace(linha), -1)
+
+		for _, lexema := range lexemas {
+			if lexema != "" {
+				tokens = append(tokens, lexer(lexema))
+			}
 		}
 	}
 
-	tokens = append(tokens, Token{tipo: TOKEN_EOF, valor: ""})
-	for _, token := range tokens {
-		fmt.Printf("Token: %+v\n", token)
-	}
+	tokens = append(tokens, Token{Tipo: TOKEN_EOF, Valor: ""})
+
+	return
 }

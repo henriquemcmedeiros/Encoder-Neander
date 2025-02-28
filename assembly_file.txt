@@ -1,8 +1,10 @@
+; Teste de comentario
 .CODE
-.ORG 0
-LDA VAR1
-ADD VAR2
-STA VAR3
+;.ORG 0 
+LDA 80 ; Segundo teste de comentario
+ADD 81
+STA 82
+HLT
 
 .DATA
 VAR1 DB 80

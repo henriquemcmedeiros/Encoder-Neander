@@ -30,11 +30,11 @@ func flagNeg(AC int) bool {
 	return AC & 0x80 != 0
 }
 
-func main() {
+func RunBinary(caminhoArquivo string) {
 	AC := 0
 	PC := 0x04
 
-	memory, err := os.ReadFile("TESTEGERAL.mem")
+	memory, err := os.ReadFile(caminhoArquivo)
 	if err != nil {
 		log.Fatalf("Não foi possível ler o arquivo!")
 		return
@@ -42,12 +42,6 @@ func main() {
 
 	memory[0x80] = 0x05
 	memory[0x81] = 0x03
-	memory[0x83] = 0x02
-	memory[0x84] = 0x01
-	memory[0x86] = 0x06
-	memory[0x87] = 0x03
-	memory[0x89] = 0xFC
-	memory[0x8A] = 0x03
 
 	posicao := 0
 
