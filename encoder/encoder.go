@@ -40,9 +40,6 @@ func RunBinary(caminhoArquivo string) {
 		return
 	}
 
-	memory[0x80] = 0x05
-	memory[0x81] = 0x03
-
 	posicao := 0
 
 	for memory[PC] != HLT && PC <= 0xFF {
@@ -51,27 +48,27 @@ func RunBinary(caminhoArquivo string) {
 		switch memory[PC] {
 			case STA:
 				PC += 2
-				posicao = int(memory[PC])
+				posicao = int(memory[PC]) * 2 + 4
 				memory[posicao] = byte(AC)
 				PC += 2
 			case LDA:
 				PC += 2
-				posicao = int(memory[PC])
+				posicao = int(memory[PC]) * 2 + 4
 				AC = int(memory[posicao])
 				PC += 2
 			case ADD:
 				PC += 2
-				posicao = int(memory[PC])
+				posicao = int(memory[PC]) * 2 + 4
 				AC += int(memory[posicao])
 				PC += 2
 			case OR:
 				PC += 2
-				posicao = int(memory[PC])
+				posicao = int(memory[PC]) * 2 + 4
 				AC |= int(memory[posicao])
 				PC += 2
 			case AND:
 				PC += 2
-				posicao = int(memory[PC])
+				posicao = int(memory[PC]) * 2 + 4
 				AC &= int(memory[posicao])
 				PC += 2
 			case NOT:
