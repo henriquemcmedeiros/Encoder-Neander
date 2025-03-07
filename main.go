@@ -1,20 +1,40 @@
 package main
 
 import (
-	"Encoder/assembler"
-	"Encoder/encoder"
+	"fmt"
 	"Encoder/lexer"
-	// "fmt"
+	"Encoder/parser"
 )
 
 func main() {
-	tokens := lexer.GetTokens("../assembly_file.txt")
+	// Lexer
+	tokens := lexer.GetTokens("assembly_file.txt")
 
-	// for _, token := range tokens {
-	// 	fmt.Printf("Token: %+v\n", token)
-	// }
+	// Parser
+	parser := parser.NovoParser(tokens)
+	instrucoes, variaveis, err := parser.Parse()
+	if err != nil {
+		fmt.Println("Erro ao fazer parsing:", err)
+		return
+	}
 
-	assembler.GetBinary(tokens)
+	err = parser.ResolverSimbolos()
+	if err != nil {
+		fmt.Println("Erro ao resolver símbolos:", err)
+		return
+	}
 
-	encoder.RunBinary("output.mem")
+	fmt.Println("Instruções após resolução de símbolos:")
+	for _, inst := range instrucoes {
+		fmt.Printf("%s %s\n", inst.Opcode, inst.Operand)
+	}
+
+	fmt.Println("Variáveis:")
+	for nome, variavel := range variaveis {
+		if variavel.Tipo == "DB" {
+			fmt.Printf("%s: DB %02X (endereço: %02X)\n", nome, *variavel.Valor, *variavel.Valor)
+		} else if variavel.Tipo == "DS" {
+			fmt.Printf("%s: DS (endereço: %02X)\n", nome, *variavel.Valor)
+		}
+	}
 }

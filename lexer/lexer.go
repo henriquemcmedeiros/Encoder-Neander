@@ -26,8 +26,10 @@ var (
 	}
 
 	Define = map[string]bool{
-		"DB": true, "DS": false,
+		"DB": true, "DS": false, "EQU": true, "ORG": true,
 	}
+
+	varRegex = regexp.MustCompile(`^[A-Za-z_][A-Za-z0-9_]*$`)
 )
 
 type Token struct {
@@ -53,7 +55,7 @@ func isNumber(lexema string) bool {
 }
 
 func isVariable(lexema string) bool {
-	return regexp.MustCompile(`^[A-Za-z_][A-Za-z0-9_]*$`).MatchString(lexema)
+	return varRegex.MatchString(lexema)
 }
 
 func lexer(lexema string) Token {
@@ -74,8 +76,8 @@ func lexer(lexema string) Token {
 	}
 }
 
-func GetTokens(caminhoArquivo string)(tokens []Token) {
-	arquivo, err := os.ReadFile("assembly_file.txt")
+func GetTokens(caminhoArquivo string) (tokens []Token) {
+	arquivo, err := os.ReadFile(caminhoArquivo)
 	if err != nil {
 		log.Fatalf("Não foi possível ler o arquivo: %v", err)
 	}
@@ -83,7 +85,7 @@ func GetTokens(caminhoArquivo string)(tokens []Token) {
 	linhas := strings.Split(string(arquivo), "\n")
 
 	for _, linha := range linhas {
-		linha = strings.Split(linha, ";")[0]
+		linha = strings.Split(linha, ";")[0] // Remove comentários
 		re := regexp.MustCompile(`\s+`)
 		lexemas := re.Split(strings.TrimSpace(linha), -1)
 
